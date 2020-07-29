@@ -58,8 +58,8 @@ namespace Updater1._1
         }
         public static void AzureFileDownload(string fileName, string containerName)
         {
-            string mystrconnectionString = "DefaultEndpointsProtocol=https;AccountName=zambu;AccountKey=NeQPY59AATU/n/v2OOVeT7aG/NPu4cDUcnO1zV76NLR/7zhMdvOihAjG4oFQ92nNLqMXoxWYfGrjPSqhGjHxyg==;EndpointSuffix=core.windows.net";
-                
+            string mystrconnectionString = "<key>";//<--------------- enter your key here!
+
             CloudStorageAccount mycloudStorageAccount = CloudStorageAccount.Parse(mystrconnectionString);
             CloudBlobClient myBlob = mycloudStorageAccount.CreateCloudBlobClient();
 
