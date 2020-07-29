@@ -58,7 +58,7 @@ namespace Updater1._1
         }
         public static void AzureFileDownload(string fileName, string containerName)
         {
-            string mystrconnectionString = "<key>";//<---------------- enter your key here!
+            string mystrconnectionString = "<key>";//<------------------ enter your key here!
 
             CloudStorageAccount mycloudStorageAccount = CloudStorageAccount.Parse(mystrconnectionString);
             CloudBlobClient myBlob = mycloudStorageAccount.CreateCloudBlobClient();
