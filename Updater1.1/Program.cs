@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.WindowsAzure.Storage;
@@ -33,6 +34,7 @@ namespace Updater1._1
             if (args.Length != 4)
             {
                 while (MessageBox.Show("Dont start this .exe!!!\n This is just for updating and will be executed automaticly!") != DialogResult.OK) ;
+                DeleteMyself();
                 Application.Exit();
                 return;
             }
@@ -54,7 +56,9 @@ namespace Updater1._1
 
             Process.Start(path + "\\" + newFilename);
             Thread.Sleep(2000);
+            DeleteMyself();
             Application.Exit();
+            return;
         }
         public static void AzureFileDownload(string fileName, string containerName)
         {
@@ -73,6 +77,32 @@ namespace Updater1._1
             fileupd.Dispose();
         }
 
+        public static void DeleteMyself()
+        {
+            string batchCommands = string.Empty;
+            string exeFilename = Assembly.GetExecutingAssembly().CodeBase.Replace("file:///", string.Empty).Replace("/", "\\");
+
+            batchCommands +=  "@ECHO OFF\n"; // do not show any output
+
+            batchCommands += "ping 127.0.0.1 -n 1 > nul\n"; //proximately 4 seconds (so that the process is already terminated)
+            batchCommands += "echo j | del /F ";
+            batchCommands += exeFilename + "\n";
+            batchCommands += "echo j | del deleteMyProgram.bat";
+            File.WriteAllText("deleteMyProgram.bat", batchCommands);
+
+            StartBatSilent("deleteMyProgram.bat");
+        }
+
+        private static void StartBatSilent(string  path)
+        {
+            Process myProcess = new Process();
+            myProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            myProcess.StartInfo.CreateNoWindow = true;
+            myProcess.StartInfo.UseShellExecute = false;
+            myProcess.StartInfo.FileName = path;
+            myProcess.EnableRaisingEvents = true;
+            myProcess.Start();
+        }
     }
 
 }
