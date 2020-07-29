@@ -1,6 +1,6 @@
 ﻿namespace Updater1._1
 {
-    partial class Form1
+    partial class UpdateScreen
     {
         /// <summary>
         /// Required designer variable.
@@ -37,9 +37,10 @@
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI Symbol", 50F);
-            this.label1.Location = new System.Drawing.Point(89, 131);
+            this.label1.Location = new System.Drawing.Point(59, 85);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(1363, 133);
+            this.label1.Size = new System.Drawing.Size(910, 89);
             this.label1.TabIndex = 0;
             this.label1.Text = "The application is updating.....";
             // 
@@ -48,22 +49,24 @@
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI Symbol", 30F);
-            this.label2.Location = new System.Drawing.Point(404, 290);
+            this.label2.Location = new System.Drawing.Point(269, 188);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(691, 81);
+            this.label2.Size = new System.Drawing.Size(466, 54);
             this.label2.TabIndex = 0;
             this.label2.Text = "this should not take long";
             // 
-            // Form1
+            // UpdateScreen
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1520, 566);
+            this.ClientSize = new System.Drawing.Size(1013, 368);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Name = "UpdateScreen";
+            this.Text = "Update";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

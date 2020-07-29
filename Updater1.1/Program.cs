@@ -13,7 +13,6 @@ namespace Updater1._1
     class Program
     {
         static string path, filename, ProcessID, newFilename;
-        static Form1 Form1;
 
         static void Main(string[] args)
         {
@@ -22,11 +21,6 @@ namespace Updater1._1
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(true);
-            if (args.Length == 4)
-            {
-                Form1 = new Form1();
-                Application.Run(Form1);
-            }
             
         }
         public static void update(string[] args)
@@ -48,21 +42,23 @@ namespace Updater1._1
 
             AzureFileDownload(newFilename, "updates");
 
+
             File.Delete(path + "\\" + filename);
             Console.WriteLine("deleted!");
 
-            File.Move(path + "\\new.exe", path + "\\" + newFilename);
+            File.Move(path + "\\TempDownload.exe", path + "\\" + newFilename);
             Console.WriteLine("moved");
 
+            Thread.Sleep(1000);
+
             Process.Start(path + "\\" + newFilename);
-            Thread.Sleep(2000);
             DeleteMyself();
             Application.Exit();
             return;
         }
         public static void AzureFileDownload(string fileName, string containerName)
         {
-            string mystrconnectionString = "<key>";//<------------------ enter your key here!
+            string mystrconnectionString = "DefaultEndpointsProtocol=https;AccountName=zambu;AccountKey=NeQPY59AATU/n/v2OOVeT7aG/NPu4cDUcnO1zV76NLR/7zhMdvOihAjG4oFQ92nNLqMXoxWYfGrjPSqhGjHxyg==;EndpointSuffix=core.windows.net";//<------------------ enter your key here!
 
             CloudStorageAccount mycloudStorageAccount = CloudStorageAccount.Parse(mystrconnectionString);
             CloudBlobClient myBlob = mycloudStorageAccount.CreateCloudBlobClient();
@@ -71,7 +67,7 @@ namespace Updater1._1
             CloudBlockBlob myBlockBlob = mycontainer.GetBlockBlobReference(fileName);
 
             // provide the location of the file need to be downloaded          
-            Stream fileupd = File.OpenWrite(path + "\\new.exe");
+            Stream fileupd = File.OpenWrite(path + "\\TempDownload.exe");
             myBlockBlob.DownloadToStream(fileupd);
 
             fileupd.Dispose();

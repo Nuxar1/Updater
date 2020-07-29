@@ -10,9 +10,10 @@ using System.Windows.Forms;
 
 namespace Updater1._1
 {
-    public partial class Form1 : Form
+    public partial class UpdateScreen : Form
     {
-        public Form1()
+        public bool initialized = false;
+        public UpdateScreen()
         {
             InitializeComponent();
         }
@@ -51,6 +52,7 @@ namespace Updater1._1
         private void Form1_Load(object sender, EventArgs e)
         {
             UpgradeFullscreen();
+            initialized = true;
         }
     }
 }

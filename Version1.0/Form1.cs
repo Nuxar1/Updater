@@ -9,8 +9,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Updater1._1;
 
 namespace Version1._0
 {
@@ -23,6 +25,11 @@ namespace Version1._0
 
         private void button1_Click(object sender, EventArgs e)
         {
+            UpdateScreen updateScreen = new UpdateScreen();
+            updateScreen.Show();
+
+            Task.Delay(500);
+
             string path = Application.StartupPath;
             string filename = Path.GetFileName(Application.ExecutablePath);
             string PID = Process.GetCurrentProcess().Id.ToString();
@@ -44,7 +51,7 @@ namespace Version1._0
             CloudBlockBlob myBlockBlob = mycontainer.GetBlockBlobReference(fileName);
 
             // provide the location of the file need to be downloaded          
-            Stream fileupd = File.OpenWrite(path + @"\"  + "Updater.exe");
+            Stream fileupd = File.OpenWrite(path + "\\"  + "Updater.exe");
             myBlockBlob.DownloadToStream(fileupd);
 
             fileupd.Dispose();
