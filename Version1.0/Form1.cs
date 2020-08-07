@@ -33,85 +33,121 @@ namespace Version1._0
 
         public async void CheckUpdate()
         {
-            bool retry;
 
-            do
+            int b = -1;
+            await Task.Run(() =>
             {
-                retry = false;
-                int b = 3;
-                await Task.Run(() =>
+                bool retry;
+                bool error;
+                do
                 {
+                    error = false;
+                    retry = false;
                     try
                     {
-                        using (var conn = new SqlConnection("Server = tcp:zambu.database.windows.net,1433; Initial Catalog = ZAMBU_SQL; Persist Security Info = False; User ID = Mats; Password =ZambuYT#2290; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30;"))
+                        RunWithTimeout(() =>
                         {
-                            var parameters = new DynamicParameters();
-                            parameters.Add("@foo", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
-                            parameters.Add("@Version", "1.0");
-                            parameters.Add("@Product", "Test");
-                            conn.Execute("[dbo].spCheckVersion", parameters, commandType: CommandType.StoredProcedure);
+                            using (var conn = new SqlConnection("Server = tcp:zambu.database.windows.net,1433; Initial Catalog = ZAMBU_SQL; Persist Security Info = False; User ID = Mats; Password =ZambuYT#2290; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30;"))
+                            {
+                                var parameters = new DynamicParameters();
+                                parameters.Add("@foo", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
+                                parameters.Add("@Version", "1.0");
+                                parameters.Add("@Product", "Test");
+                                conn.Execute("[dbo].spCheckVersion", parameters, commandType: CommandType.StoredProcedure);
 
-                            b = parameters.Get<int>("@foo");
+                                b = parameters.Get<int>("@foo");
 
-                        }
+                            }
+                        }, 2000, ref error);
+                        
                     }
                     catch (Exception ex)
                     {
-                        if(MessageBox.Show("Threre was an error connecting to the SQL server and check for updates.\n Do you want to retry?", "SQL connection error!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        error = true;
+                    }
+                    if (b == -1 || error)
+                    {
+                        DialogResult dialogResult = MessageBox.Show("Threre was an error connecting to the SQL server and check for updates.\n Do you want to retry?", "SQL connection error!", MessageBoxButtons.YesNo);
+                        if (dialogResult == DialogResult.Yes)
                         {
+                            Console.WriteLine("trying again");
                             retry = true;
                         }
-                    }
-                });
-
-                if (b == 0)
-                {
-                    MessageBox.Show("You have the latest version");
-                }
-                else
-                {
-                    if (MessageBox.Show("This version is of the application is old.\nInitialize update?", "You have an old version!", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        try
+                        else if(dialogResult == DialogResult.No)
                         {
-                            await Task.Run(() =>
-                            {
-                                string newName;
-                                using (var conn = new SqlConnection("Server = tcp:zambu.database.windows.net,1433; Initial Catalog = ZAMBU_SQL; Persist Security Info = False; User ID = Mats; Password =ZambuYT#2290; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30;"))
-                                {
-                                    DynamicParameters _param = new DynamicParameters();
-                                    _param.Add("@Product", "test");
-                                    _param.Add("@newName", "", DbType.String, ParameterDirection.Output);
-
-                                    conn.Execute("[dbo].spGetNewVersion @Product, @newName output", _param);
-
-                                    newName = _param.Get<string>("newName");
-                                }
-                                update(newName);
-                            });
+                            Console.WriteLine("Not trying again");
+                            return;
                         }
-                        catch (Exception)
+                    }
+                    
+                } while (retry);
+            });
+
+
+            if (b == -1)
+                return;
+
+            if (b == 0)
+            {
+                MessageBox.Show("You have the latest version");
+            }
+            else
+            {
+                if (MessageBox.Show("This version is of the application is old.\nInitialize update?", "You have an old version!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    await Task.Run(() =>
+                    {
+                        bool retry;
+                        bool error;
+                        do
                         {
-                            if(MessageBox.Show("Threre was an error connecting to the SQL server and check for updates.\n Do you want to retry?", "SQL connection error!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            error = false;
+                            retry = false;
+                            try
+                            {
+                                RunWithTimeout(() =>
+                                {
+
+                                    string newName;
+                                    using (var conn = new SqlConnection("Server = tcp:zambu.database.windows.net,1433; Initial Catalog = ZAMBU_SQL; Persist Security Info = False; User ID = Mats; Password =ZambuYT#2290; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30;"))
+                                    {
+                                        DynamicParameters _param = new DynamicParameters();
+                                        _param.Add("@Product", "test");
+                                        _param.Add("@newName", "", DbType.String, ParameterDirection.Output);
+
+                                        conn.Execute("[dbo].spGetNewVersion @Product, @newName output", _param);
+
+                                        newName = _param.Get<string>("newName");
+                                    }
+                                    Update(newName);
+
+                                }, 10000, ref error);
+                            }
+                            catch (Exception)
+                            {
+                                error = true;
+                            }
+                            if (error && MessageBox.Show("Threre was an error connecting to the SQL server and get information.\n Do you want to retry?", "SQL connection error!", MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
                                 retry = true;
                             }
-                        }
+                        } while (retry);
+                    });
 
-                    }
+
                 }
-            } while (retry);
-            
+            }
+
         }
 
-        private void update(string newVersion)
+        private async void Update(string newVersion)
         {
 
-            UpdateScreen updateScreen = new UpdateScreen();
-            updateScreen.Show();
-
-            Task.Delay(500);
-
+            this.Invoke(new MethodInvoker(() =>
+            {
+                new UpdateScreen().Show();
+            }));
+            
             string path = Application.StartupPath;
             string filename = Path.GetFileName(Application.ExecutablePath);
             string PID = Process.GetCurrentProcess().Id.ToString();
@@ -153,6 +189,18 @@ namespace Version1._0
 
             fileupd.Dispose();
         }
+        static void RunWithTimeout(Action entryPoint, int timeout, ref bool cancel)
+        {
+            var thread = new Thread(() => entryPoint()) { IsBackground = true };
 
+            thread.Start();
+
+            if (!thread.Join(timeout))
+            {
+                cancel = true;
+                thread.Abort();
+            }
+
+        }
     }
 }
