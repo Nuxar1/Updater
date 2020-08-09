@@ -22,7 +22,7 @@ namespace Updater1._1
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(true);
             
-        }
+        }   
         public static void update(string[] args)
         {
             if (args.Length != 4)
@@ -48,8 +48,6 @@ namespace Updater1._1
 
             File.Move(path + "\\TempDownload.exe", path + "\\" + newFilename);
             Console.WriteLine("moved");
-
-            Thread.Sleep(1000);
 
             Process.Start(path + "\\" + newFilename);
             DeleteMyself();
