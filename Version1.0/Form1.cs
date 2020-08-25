@@ -47,7 +47,7 @@ namespace Version1._0
                     {
                         RunWithTimeout(() =>
                         {
-                            using (var conn = new SqlConnection("Server = tcp:zambu.database.windows.net,1433; Initial Catalog = ZAMBU_SQL; Persist Security Info = False; User ID = Mats; Password =ZambuYT#2290; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30;"))
+                            using (var conn = new SqlConnection(""))
                             {
                                 var parameters = new DynamicParameters();
                                 parameters.Add("@foo", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
@@ -109,7 +109,7 @@ namespace Version1._0
                                 {
 
                                     string newName;
-                                    using (var conn = new SqlConnection("Server = tcp:zambu.database.windows.net,1433; Initial Catalog = ZAMBU_SQL; Persist Security Info = False; User ID = Mats; Password =ZambuYT#2290; MultipleActiveResultSets = False; Encrypt = True; TrustServerCertificate = False; Connection Timeout = 30;"))
+                                    using (var conn = new SqlConnection(""))
                                     {
                                         DynamicParameters _param = new DynamicParameters();
                                         _param.Add("@Product", "test");
@@ -175,7 +175,7 @@ namespace Version1._0
 
         public static void AzureFileDownload(string fileName, string containerName, string path)
         {
-            string mystrconnectionString = "DefaultEndpointsProtocol=https;AccountName=zambu;AccountKey=NeQPY59AATU/n/v2OOVeT7aG/NPu4cDUcnO1zV76NLR/7zhMdvOihAjG4oFQ92nNLqMXoxWYfGrjPSqhGjHxyg==;EndpointSuffix=core.windows.net";//<------------------ enter your key here!
+            string mystrconnectionString = "";//<------------------ enter your key here!
 
             CloudStorageAccount mycloudStorageAccount = CloudStorageAccount.Parse(mystrconnectionString);
             CloudBlobClient myBlob = mycloudStorageAccount.CreateCloudBlobClient();
